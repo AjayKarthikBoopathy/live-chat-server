@@ -44,3 +44,42 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, console.log("Server is Running..."));
+
+// Web Socket
+const io = require("socket.io")(server, {
+  cors: {
+    origin: "*",
+  },
+  pingTimeout: 60000,
+});
+
+io.on("connection", (socket) => {
+  console.log("socket.io Connection done");
+
+// Event 1
+socket.on("setup", (user) => {
+  socket.join(user.data._id);
+  console.log("server :// joined user : ", user.data._id);
+  socket.emit("connected");
+});
+
+// Event 2
+socket.on("join chat", (room) => {
+  socket.join(room);
+  console.log("User joined Room : ", room);
+});
+
+// Event 3
+socket.on("new message", (newMessageStatus) => {
+  var chat = newMessageStatus.chat;
+  if (!chat.users) {
+    return console.log("chat.users not defined");
+  }
+  chat.users.forEach((user) => {
+    if (user._id == newMessageStatus.sender._id) return;
+
+    socket.in(user._id).emit("message received", newMessageReceived);
+  });
+});
+
+});
