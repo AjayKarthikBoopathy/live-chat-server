@@ -43,7 +43,7 @@ app.use(notFound);
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, console.log("Server is Running..."));
+const server = app.listen(PORT, console.log("Server is Running..."));
 
 // Web Socket
 const io = require("socket.io")(server, {
